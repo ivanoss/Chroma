@@ -34,7 +34,7 @@ Fonctionnalités secondaires réalisées en plus : mode sombre (suit le réglage
 
 ## Démarrer
 
-Prérequis : Node.js 20 ou plus récent.
+Prérequis : Node.js 22.13 ou plus récent (version LTS conseillée). SQLite est intégré à Node.js : rien à compiler.
 
 ```bash
 npm install

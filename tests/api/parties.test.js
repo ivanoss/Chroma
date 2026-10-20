@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { preparer, inscrire, inscrireAdmin, jouerJusquALaFin, coupSimple } from './outils.js';
 import * as dao from '../../server/db/dao.js';
-import { reconstruirePartie } from '../../server/services/parties.js';
+import { reconstruirePartie } from '../../server/moteur/rejeu.js';
 
 describe('API — parties', () => {
   let ctx;

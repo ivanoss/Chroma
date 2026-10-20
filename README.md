@@ -58,6 +58,24 @@ NODE_ENV=production JWT_SECRET=... DATABASE_URL=postgres://user:mdp@hote/chroma 
 
 Les tables sont créées au premier démarrage (`server/db/schema.postgres.sql`).
 
+## Version autonome (sans serveur)
+
+Pour une démo ou un hébergement qui n'accepte que des fichiers statiques, on peut générer
+un seul fichier HTML :
+
+```bash
+npm run build:autonome   # → dist/chroma.html
+```
+
+Ce fichier s'ouvre directement dans un navigateur ou se dépose sur n'importe quel hébergement web.
+Il réutilise le même client, le même moteur et les mêmes bots ; seuls deux modules sont remplacés
+(`statique/api-local.js` et `statique/connexion-locale.js`). Les parties, statistiques et rejeux
+sont enregistrés dans le navigateur (localStorage).
+
+Limites, par rapport à la version avec serveur : pas de vrais comptes (un simple nom de joueur),
+un classement limité aux joueurs du même appareil, pas d'administration, et c'est le navigateur
+qui applique les règles. La version avec serveur reste l'architecture du projet décrite dans le cadrage.
+
 ## Tests et qualité
 
 ```bash

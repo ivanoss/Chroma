@@ -1,5 +1,5 @@
 // Tableau de bord administrateur.
-import { h, vider, toast, formaterDate } from '../dom.js';
+import { h, vider, toast, formaterDate, confirmer } from '../dom.js';
 import { api } from '../api.js';
 import { obtenirSession } from '../session.js';
 
@@ -116,7 +116,13 @@ export async function vueAdmin(conteneur) {
       type: 'button',
       class: 'bouton bouton--danger',
       onclick: async () => {
-        if (!confirm('Supprimer définitivement toutes les parties abandonnées ?')) return;
+        if (
+          !(await confirmer('Supprimer définitivement toutes les parties abandonnées ?', {
+            action: 'Supprimer',
+            danger: true,
+          }))
+        )
+          return;
         const { supprimees } = await api.adminPurger();
         toast(`${supprimees} partie${supprimees > 1 ? 's' : ''} supprimée${supprimees > 1 ? 's' : ''}.`);
         charger();

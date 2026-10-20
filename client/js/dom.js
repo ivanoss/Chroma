@@ -59,3 +59,38 @@ export function formaterDate(iso) {
 }
 
 export const pourcentage = (x) => `${Math.round(x * 100)} %`;
+
+// Boîte de confirmation dans la page (remplace window.confirm, bloqué dans certains cadres).
+export function confirmer(message, { action = 'Confirmer', danger = false } = {}) {
+  return new Promise((resoudre) => {
+    let reponse = false;
+    const dialogue = h(
+      'dialog',
+      { 'aria-labelledby': 'titre-confirmation' },
+      h('h2', { id: 'titre-confirmation' }, message),
+      h(
+        'div',
+        { class: 'dialogue__actions' },
+        h(
+          'button',
+          {
+            type: 'button',
+            class: ['bouton', danger && 'bouton--danger-plein'],
+            onclick: () => {
+              reponse = true;
+              dialogue.close();
+            },
+          },
+          action,
+        ),
+        h('button', { type: 'button', class: 'bouton bouton--secondaire', onclick: () => dialogue.close() }, 'Annuler'),
+      ),
+    );
+    dialogue.addEventListener('close', () => {
+      dialogue.remove();
+      resoudre(reponse);
+    });
+    document.body.append(dialogue);
+    dialogue.showModal();
+  });
+}

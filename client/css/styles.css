@@ -35,7 +35,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --encre: #e9e8f5;
     --encre-douce: #a4a7c8;
     --papier: #15172b;
@@ -47,6 +47,19 @@
     --focus: #8fb0ff;
     color-scheme: dark;
   }
+}
+
+:root[data-theme='dark'] {
+  --encre: #e9e8f5;
+  --encre-douce: #a4a7c8;
+  --papier: #15172b;
+  --surface: #1e2140;
+  --trait: #33375f;
+  --table: #1d2046;
+  --table-bord: #2d3268;
+  --danger: #ff6b76;
+  --focus: #8fb0ff;
+  color-scheme: dark;
 }
 
 *,
@@ -131,7 +144,9 @@ a {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 14px clamp(16px, 4vw, 40px);
+  padding-block: 14px;
+  padding-left: max(clamp(16px, 4vw, 40px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 4vw, 40px), env(safe-area-inset-right, 0px));
 }
 
 .logo {
@@ -186,7 +201,9 @@ a {
 }
 
 main {
-  padding: 8px clamp(16px, 4vw, 40px) 64px;
+  padding-block: 8px 64px;
+  padding-left: max(clamp(16px, 4vw, 40px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 4vw, 40px), env(safe-area-inset-right, 0px));
   max-width: 1240px;
   margin: 0 auto;
 }
@@ -1112,4 +1129,25 @@ dialog::backdrop {
 }
 .titre-classement {
   margin-top: 28px;
+}
+.bouton--danger-plein {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+#titre-confirmation {
+  font-size: 1.25rem;
+  margin-bottom: 18px;
+}
+.profils {
+  margin-top: 22px;
+}
+.profils__liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.note-autonome {
+  margin-top: 22px;
+  font-size: 0.9rem;
 }

@@ -67,12 +67,12 @@ function dessinerNav() {
             onclick: async () => {
               await api.deconnexion().catch(() => {});
               fermerSession();
-              toast('Vous êtes déconnecté.');
+              if (!api.autonome) toast('Vous êtes déconnecté.');
               location.hash = '#/';
               naviguer();
             },
           },
-          'Se déconnecter',
+          api.autonome ? 'Changer de joueur' : 'Se déconnecter',
         ),
       ].filter(Boolean),
     );
@@ -80,7 +80,7 @@ function dessinerNav() {
     nav.append(
       lienNav('/regles', 'Règles'),
       lienNav('/classement', 'Classement'),
-      lienNav('/connexion', 'Se connecter'),
+      lienNav('/connexion', api.autonome ? 'Jouer' : 'Se connecter'),
     );
   }
 }

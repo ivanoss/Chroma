@@ -10,6 +10,7 @@ import { creerPartie, appliquerAction, vuePublique, calculerRangs, CoupIllegal }
 import { creerAleatoire, nouvelleGraine } from '../moteur/aleatoire.js';
 import { carteParId, estJoker, PAQUET_REFERENCE } from '../moteur/cartes.js';
 import { choisirActionBot, DIFFICULTES } from '../bots/index.js';
+import { reconstruirePartie } from '../moteur/rejeu.js';
 import * as dao from '../db/dao.js';
 import { nonTrouve, requeteInvalide, conflit } from '../erreurs.js';
 
@@ -217,56 +218,12 @@ export async function supprimer(db, utilisateur, partieId) {
 // puis on rejoue les coups du journal un par un avec le moteur.
 // --------------------------------------------------------------------------
 
-function image(etat, coup = null) {
-  return {
-    numeroTour: etat.numeroTour,
-    joueurCourant: etat.joueurCourant,
-    sens: etat.sens,
-    couleurActive: etat.couleurActive,
-    sommet: etat.defausse.at(-1).id,
-    taillePioche: etat.pioche.length,
-    penaliteEnCours: etat.penaliteEnCours,
-    mains: etat.joueurs.map((j) => j.main.map((c) => c.id)),
-    coup,
-  };
-}
-
-export async function reconstruirePartie(partie, participants, coups) {
-  const aleatoire = creerAleatoire(partie.graine);
-  const noms = participants.map((p) => p.nom_affiche);
-  let etat = creerPartie({ noms, aleatoire });
-  const images = [image(etat)];
-  for (const c of coups) {
-    const action =
-      c.type_action === 'jouer'
-        ? {
-            type: 'jouer',
-            idCarte: c.carte_id,
-            couleurChoisie: c.couleur_choisie ?? undefined,
-            derniereCarte: Boolean(c.derniere_carte),
-          }
-        : { type: 'piocher' };
-    etat = appliquerAction(etat, c.position_table, action, c.numero_tour, aleatoire);
-    images.push(
-      image(etat, {
-        position: c.position_table,
-        type: c.type_action,
-        carteId: c.carte_id,
-        couleurChoisie: c.couleur_choisie,
-        derniereCarte: Boolean(c.derniere_carte),
-        cartesPiochees: c.cartes_piochees,
-      }),
-    );
-  }
-  return { etat, images };
-}
-
 export async function rejeu(db, utilisateur, partieId) {
   const partie = await chargerPartieDuJoueur(db, utilisateur, partieId);
   if (partie.statut === 'en_cours') throw conflit('Le rejeu est disponible une fois la partie finie.');
   const participants = await dao.lireParticipants(db, partie.id);
   const coups = await dao.lireCoups(db, partie.id);
-  const { images } = await reconstruirePartie(partie, participants, coups);
+  const { images } = reconstruirePartie(partie, participants, coups);
   // Le référentiel des cartes permet au client d'afficher les id des images.
   return { partie: resume(partie, participants), cartes: PAQUET_REFERENCE, images };
 }

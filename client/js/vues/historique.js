@@ -1,5 +1,5 @@
 // Écran 4 — historique des parties et rejeu coup par coup.
-import { h, vider, toast, formaterDate } from '../dom.js';
+import { h, vider, toast, formaterDate, confirmer } from '../dom.js';
 import { api } from '../api.js';
 import { elementCarte, libelleCarte, couleurCss, FORMES } from '../cartes.js';
 
@@ -98,7 +98,13 @@ export async function vueHistorique(conteneur) {
                       class: 'bouton bouton--petit bouton--danger',
                       'aria-label': `Supprimer la partie du ${formaterDate(p.dateDebut)}`,
                       onclick: async () => {
-                        if (!confirm('Supprimer cette partie de votre historique ?')) return;
+                        if (
+                          !(await confirmer('Supprimer cette partie de votre historique ?', {
+                            action: 'Supprimer',
+                            danger: true,
+                          }))
+                        )
+                          return;
                         try {
                           await api.supprimer(p.id);
                           toast('Partie supprimée.');

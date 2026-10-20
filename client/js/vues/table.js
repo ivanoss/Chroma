@@ -2,7 +2,7 @@
 // Le client n'applique aucune règle : il affiche la vue publique envoyée par le
 // serveur, n'active que les cartes listées dans `coupsJouables`, envoie l'action
 // et anime les coups des bots renvoyés dans `evenements`.
-import { h, vider, toast, attendre, mouvementReduit } from '../dom.js';
+import { h, vider, toast, attendre, mouvementReduit, confirmer } from '../dom.js';
 import { api } from '../api.js';
 import { elementCarte, dosDeCarte, libelleCarte, COULEURS, couleurCss, FORMES } from '../cartes.js';
 
@@ -319,7 +319,13 @@ export async function vueTable(conteneur) {
   }
 
   async function abandonner() {
-    if (!confirm('Abandonner la partie ? Elle comptera comme une défaite.')) return;
+    if (
+      !(await confirmer('Abandonner la partie ? Elle comptera comme une défaite.', {
+        action: 'Abandonner',
+        danger: true,
+      }))
+    )
+      return;
     try {
       await api.abandonner(etat.partie.id);
       toast('Partie abandonnée.');

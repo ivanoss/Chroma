@@ -12,7 +12,13 @@ export async function vueClassement(conteneur) {
       'section',
       { class: 'panneau' },
       h('h1', {}, 'Classement'),
-      h('p', { class: 'discret' }, 'Classé par nombre de victoires, puis par taux de victoire et meilleure série.'),
+      h(
+        'p',
+        { class: 'discret' },
+        api.autonome
+          ? 'Joueurs de cet appareil, classés par nombre de victoires, puis par taux de victoire et meilleure série.'
+          : 'Classé par nombre de victoires, puis par taux de victoire et meilleure série.',
+      ),
       classement.length
         ? h(
             'div',

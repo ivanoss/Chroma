@@ -7,6 +7,14 @@ Auteur : **Ivan Makarenkov**
 
 ![Table de jeu](docs/captures/3-table-de-jeu.png)
 
+## Jouer en ligne
+
+**👉 [chroma-jgh1.onrender.com](https://chroma-jgh1.onrender.com)**
+
+- Cliquez sur **Créer un compte** (courriel, nom d'utilisateur, mot de passe d'au moins 8 caractères avec une lettre et un chiffre), puis lancez une partie.
+- Le site est hébergé gratuitement : s'il n'a pas été visité depuis 15 minutes, le premier chargement peut prendre environ une minute.
+- Accès administrateur : identifiants fournis à l'enseignant sur demande.
+
 ## Statut
 
 MVP terminé (semaine 9) : toutes les fonctionnalités indispensables du [document de cadrage](docs/CADRAGE.md) sont codées et testées.

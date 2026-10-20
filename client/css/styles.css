@@ -1,0 +1,1115 @@
+/* ==========================================================================
+   Chroma — feuille de styles
+   Les quatre couleurs du jeu sont des variables : le mode sombre ne fait
+   que redéfinir les couleurs de fond et de texte.
+   ========================================================================== */
+
+:root {
+  --rouge: #e8434f;
+  --jaune: #f4b92a;
+  --vert: #18a374;
+  --bleu: #3466e0;
+
+  --encre: #1c1f3b;
+  --encre-douce: #555a7e;
+  --papier: #ecebf3;
+  --surface: #ffffff;
+  --trait: #d3d1e2;
+  --table: #262a52;
+  --table-bord: #343a6e;
+  --sur-table: #eceaff;
+  --danger: #c62d3a;
+  --focus: #3466e0;
+
+  --police-titre: 'Bricolage Grotesque', 'Arial Narrow', system-ui, sans-serif;
+  --police-texte: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --rayon: 10px;
+  --rayon-carte: 9px;
+  --carte-l: 74px;
+  --carte-h: 108px;
+  --ombre-carte: 0 1px 0 rgb(28 31 59 / 0.25), 0 6px 14px -6px rgb(28 31 59 / 0.45);
+  --duree: 180ms;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #e9e8f5;
+    --encre-douce: #a4a7c8;
+    --papier: #15172b;
+    --surface: #1e2140;
+    --trait: #33375f;
+    --table: #1d2046;
+    --table-bord: #2d3268;
+    --danger: #ff6b76;
+    --focus: #8fb0ff;
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--papier);
+  color: var(--encre);
+  font: 400 1rem/1.55 var(--police-texte);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--police-titre);
+  line-height: 1.1;
+  margin: 0 0 0.5em;
+  letter-spacing: -0.01em;
+}
+h1 {
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 800;
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+p {
+  margin: 0 0 1em;
+  max-width: 68ch;
+}
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.evitement {
+  position: absolute;
+  left: -9999px;
+}
+.evitement:focus {
+  left: 16px;
+  top: 8px;
+  z-index: 100;
+  background: var(--surface);
+  padding: 8px 12px;
+  border-radius: var(--rayon);
+}
+
+.visuellement-cache {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Barre du haut ---------------------------------------------- */
+
+.barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px clamp(16px, 4vw, 40px);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo__disque {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--encre) 0 28%, transparent 29%),
+    conic-gradient(var(--rouge) 0 25%, var(--jaune) 0 50%, var(--vert) 0 75%, var(--bleu) 0);
+}
+.logo__mot {
+  font: 800 1.45rem/1 var(--police-titre);
+  letter-spacing: -0.02em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.nav a,
+.nav button {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--encre);
+  background: none;
+  border: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.nav a:hover,
+.nav button:hover {
+  background: var(--surface);
+}
+.nav a[aria-current='page'] {
+  background: var(--surface);
+  font-weight: 700;
+}
+.nav__moi {
+  color: var(--encre-douce);
+  font-size: 0.9rem;
+  padding-left: 10px;
+}
+
+main {
+  padding: 8px clamp(16px, 4vw, 40px) 64px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+main:focus {
+  outline: none;
+}
+
+/* ---------- Éléments de formulaire et boutons ------------------------- */
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: 700 1rem/1 var(--police-texte);
+  padding: 12px 18px;
+  border-radius: var(--rayon);
+  border: 2px solid var(--encre);
+  background: var(--encre);
+  color: var(--papier);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform var(--duree);
+}
+.bouton:hover {
+  transform: translateY(-1px);
+}
+.bouton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.bouton--secondaire {
+  background: transparent;
+  color: var(--encre);
+}
+.bouton--danger {
+  background: transparent;
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.bouton--petit {
+  padding: 7px 12px;
+  font-size: 0.9rem;
+}
+
+.champ {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.champ label {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.champ input,
+select {
+  font: inherit;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--trait);
+  background: var(--surface);
+  color: var(--encre);
+  width: 100%;
+}
+.champ input:focus {
+  border-color: var(--focus);
+}
+.champ__erreur {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+.champ__aide {
+  color: var(--encre-douce);
+  font-size: 0.85rem;
+}
+
+.message-erreur {
+  color: var(--danger);
+  font-weight: 700;
+  min-height: 1.5em;
+}
+
+.panneau {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.discret {
+  color: var(--encre-douce);
+}
+
+/* ---------- Cartes ------------------------------------------------------ */
+
+.carte {
+  --c: var(--encre);
+  position: relative;
+  flex: none;
+  width: var(--carte-l);
+  height: var(--carte-h);
+  border-radius: var(--rayon-carte);
+  background: var(--c);
+  color: #fff;
+  border: 3px solid #fff;
+  box-shadow: var(--ombre-carte);
+  display: grid;
+  place-items: center;
+  font-family: var(--police-titre);
+  padding: 0;
+  user-select: none;
+}
+.carte--rouge {
+  --c: var(--rouge);
+}
+.carte--jaune {
+  --c: var(--jaune);
+  color: #2b2100;
+}
+.carte--vert {
+  --c: var(--vert);
+}
+.carte--bleu {
+  --c: var(--bleu);
+}
+.carte--joker {
+  --c: #1c1f3b;
+}
+
+/* Le grand ovale incliné est remplacé par une pastille ronde. */
+.carte__centre {
+  width: 74%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgb(255 255 255 / 0.18);
+  font-weight: 800;
+  font-size: calc(var(--carte-l) * 0.46);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.carte--joker .carte__centre {
+  background:
+    radial-gradient(circle, #1c1f3b 0 44%, transparent 45%),
+    conic-gradient(var(--rouge) 0 25%, var(--jaune) 0 50%, var(--vert) 0 75%, var(--bleu) 0);
+  font-size: calc(var(--carte-l) * 0.2);
+  color: #fff;
+}
+.carte__coin {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-weight: 800;
+  font-size: calc(var(--carte-l) * 0.2);
+  line-height: 1;
+}
+/* Forme propre à chaque couleur, pour les daltoniens. */
+.carte__forme {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: calc(var(--carte-l) * 0.17);
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.carte--dos {
+  --c: var(--table);
+  background:
+    radial-gradient(circle at 50% 50%, var(--table) 0 22%, transparent 23%),
+    repeating-conic-gradient(
+      from 10deg,
+      var(--rouge) 0 15deg,
+      var(--jaune) 0 30deg,
+      var(--vert) 0 45deg,
+      var(--bleu) 0 60deg
+    );
+  border-color: #fff;
+}
+.carte--petite {
+  --carte-l: 44px;
+  --carte-h: 64px;
+  border-width: 2px;
+  border-radius: 6px;
+}
+.carte--mini {
+  --carte-l: 30px;
+  --carte-h: 44px;
+  border-width: 2px;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.carte--grande {
+  --carte-l: 96px;
+  --carte-h: 140px;
+  border-width: 4px;
+  border-radius: 12px;
+}
+
+button.carte {
+  cursor: pointer;
+  transition:
+    transform var(--duree),
+    filter var(--duree);
+}
+button.carte:disabled {
+  cursor: default;
+}
+.carte--jouable:hover,
+.carte--jouable:focus-visible {
+  transform: translateY(-14px);
+}
+.main-joueur.mon-tour .carte:not(.carte--jouable) {
+  filter: saturate(0.35) brightness(0.8);
+}
+
+/* ---------- Accueil visiteur ------------------------------------------- */
+
+.accueil-visiteur {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(24px, 5vw, 64px);
+  align-items: center;
+  padding-top: clamp(8px, 4vw, 40px);
+}
+.accroche p {
+  font-size: 1.125rem;
+}
+.eventail {
+  display: flex;
+  margin: 28px 0 32px;
+  padding-left: 20px;
+  height: 160px;
+  align-items: flex-end;
+}
+.eventail .carte + .carte {
+  margin-left: -26px;
+  transform-origin: 50% 120%;
+}
+.eventail .carte:nth-child(1) {
+  transform: rotate(-18deg);
+}
+.eventail .carte:nth-child(2) {
+  transform: rotate(-9deg) translateY(-8px);
+}
+.eventail .carte:nth-child(3) {
+  transform: rotate(0deg) translateY(-12px);
+}
+.eventail .carte:nth-child(4) {
+  transform: rotate(9deg) translateY(-8px);
+}
+.eventail .carte:nth-child(5) {
+  transform: rotate(18deg);
+}
+
+.bascule {
+  display: flex;
+  gap: 4px;
+  background: var(--papier);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+.bascule button {
+  flex: 1;
+  font: 700 0.95rem var(--police-texte);
+  border: 0;
+  border-radius: 7px;
+  padding: 9px;
+  background: transparent;
+  color: var(--encre-douce);
+  cursor: pointer;
+}
+.bascule button[aria-pressed='true'] {
+  background: var(--surface);
+  color: var(--encre);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+
+/* ---------- Accueil joueur --------------------------------------------- */
+
+.accueil {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.accueil__titre {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+}
+.reprise {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--table);
+  color: var(--sur-table);
+  border-radius: 14px;
+  padding: 18px 22px;
+}
+.reprise p {
+  margin: 0;
+}
+.reprise .bouton {
+  background: var(--sur-table);
+  color: var(--table);
+  border-color: var(--sur-table);
+}
+
+.niveaux {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  margin: 0 0 18px;
+}
+.niveaux legend,
+.nb-bots legend {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.niveau input,
+.nb-bots input {
+  position: absolute;
+  opacity: 0;
+}
+.niveau label {
+  display: grid;
+  gap: 4px;
+  height: 100%;
+  padding: 14px;
+  border-radius: var(--rayon);
+  border: 2px solid var(--trait);
+  cursor: pointer;
+}
+.niveau strong {
+  font: 700 1.1rem var(--police-titre);
+}
+.niveau span {
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+  line-height: 1.35;
+}
+.niveau input:checked + label {
+  border-color: var(--encre);
+  box-shadow: inset 0 0 0 1px var(--encre);
+}
+.niveau input:focus-visible + label,
+.nb-bots input:focus-visible + label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.nb-bots {
+  border: 0;
+  padding: 0;
+  margin: 0 0 22px;
+}
+.nb-bots div {
+  display: flex;
+  gap: 8px;
+}
+.nb-bots label {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 44px;
+  border-radius: 8px;
+  border: 2px solid var(--trait);
+  font-weight: 700;
+  cursor: pointer;
+}
+.nb-bots input:checked + label {
+  border-color: var(--encre);
+  background: var(--encre);
+  color: var(--papier);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px 12px;
+  margin: 0 0 8px;
+}
+.stats div {
+  display: grid;
+}
+.stats dt {
+  order: 2;
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+}
+.stats dd {
+  order: 1;
+  margin: 0;
+  font: 800 1.75rem/1.1 var(--police-titre);
+}
+
+/* ---------- Tableaux (classement, historique, admin) ------------------ */
+
+.tableau-conteneur {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+th,
+td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--trait);
+  white-space: nowrap;
+}
+th {
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+  font-weight: 700;
+}
+td.nombre,
+th.nombre {
+  text-align: right;
+}
+tr.moi td {
+  font-weight: 700;
+}
+.rang-podium {
+  font: 800 1.1rem var(--police-titre);
+}
+
+.pastille {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: var(--papier);
+}
+.pastille--victoire {
+  background: var(--vert);
+  color: #fff;
+}
+.pastille--abandon {
+  background: transparent;
+  border: 1.5px dashed var(--encre-douce);
+  color: var(--encre-douce);
+}
+
+.filtres {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: end;
+  margin-bottom: 18px;
+}
+.filtres .champ {
+  margin: 0;
+  min-width: 170px;
+}
+
+.vide {
+  padding: 32px 0;
+  text-align: center;
+  color: var(--encre-douce);
+}
+.vide p {
+  margin: 0 auto 16px;
+}
+
+/* ---------- Table de jeu ----------------------------------------------- */
+
+.jeu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 20px;
+  align-items: start;
+}
+.plateau {
+  background: var(--table);
+  color: var(--sur-table);
+  border-radius: 20px;
+  padding: clamp(14px, 2.5vw, 26px);
+  display: grid;
+  grid-template-areas:
+    '. haut .'
+    'gauche centre droite'
+    'statut statut statut'
+    'main main main'
+    'actions actions actions';
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 18px 12px;
+  min-height: 600px;
+}
+.adversaire {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 14px;
+  transition: background var(--duree);
+}
+.adversaire--haut {
+  grid-area: haut;
+}
+.adversaire--gauche {
+  grid-area: gauche;
+}
+.adversaire--droite {
+  grid-area: droite;
+}
+.adversaire.actif {
+  background: var(--table-bord);
+  box-shadow: inset 0 0 0 2px var(--sur-table);
+}
+.adversaire__nom {
+  font: 700 1.05rem var(--police-titre);
+}
+.adversaire__compte {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+.adversaire__compte.alerte {
+  color: var(--jaune);
+  font-weight: 700;
+  opacity: 1;
+}
+.dos-eventail {
+  display: flex;
+  padding-left: 18px;
+}
+.dos-eventail .carte {
+  margin-left: -18px;
+}
+.main-revelee {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  max-width: 260px;
+}
+
+.centre {
+  grid-area: centre;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  justify-items: center;
+  gap: 10px 28px;
+}
+.pioche {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 14px;
+}
+.pioche:disabled {
+  cursor: default;
+}
+.pioche:not(:disabled):hover .carte {
+  transform: translateY(-4px);
+}
+.pioche .carte {
+  transition: transform var(--duree);
+}
+.pioche__texte {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.defausse {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+/* L'anneau autour de la défausse montre la couleur active. */
+.defausse__anneau {
+  padding: 8px;
+  border-radius: 18px;
+  background: var(--anneau, transparent);
+  transition: background 300ms;
+}
+.defausse__couleur {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.sens {
+  grid-column: 1 / -1;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sens__fleche {
+  font-size: 1.3rem;
+  line-height: 1;
+  display: inline-block;
+}
+.statut {
+  grid-area: statut;
+  text-align: center;
+  min-height: 1.6em;
+  font: 700 1.15rem var(--police-titre);
+}
+.statut--penalite {
+  color: var(--jaune);
+}
+.main-joueur {
+  grid-area: main;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-top: 16px;
+}
+.actions-jeu {
+  grid-area: actions;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.plateau .bouton {
+  border-color: var(--sur-table);
+  background: var(--sur-table);
+  color: var(--table);
+}
+.plateau .bouton--secondaire {
+  background: transparent;
+  color: var(--sur-table);
+}
+.bouton-annonce[aria-pressed='true'] {
+  background: var(--jaune);
+  border-color: var(--jaune);
+  color: #2b2100;
+}
+
+.journal {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 16px 18px;
+  max-height: 640px;
+  overflow-y: auto;
+}
+.journal ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 0.92rem;
+}
+.journal li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.journal__tour {
+  color: var(--encre-douce);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.2em;
+}
+.puce {
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: 50%;
+  background: var(--c, var(--encre-douce));
+  flex: none;
+  transform: translateY(1px);
+}
+
+/* Dialogue (choix de couleur, fin de partie) */
+dialog {
+  border: 0;
+  border-radius: 18px;
+  padding: 26px;
+  background: var(--surface);
+  color: var(--encre);
+  max-width: min(440px, calc(100vw - 32px));
+  box-shadow: 0 20px 60px -20px rgb(0 0 0 / 0.6);
+}
+dialog::backdrop {
+  background: rgb(20 22 45 / 0.6);
+}
+.choix-couleurs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 18px 0;
+}
+.choix-couleurs button {
+  font: 700 1.05rem var(--police-titre);
+  border: 0;
+  border-radius: 12px;
+  padding: 20px 10px;
+  color: #fff;
+  cursor: pointer;
+  background: var(--c);
+}
+.choix-couleurs button[data-couleur='jaune'] {
+  color: #2b2100;
+}
+.resultats {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 22px;
+  display: grid;
+  gap: 6px;
+}
+.resultats li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--papier);
+}
+.dialogue__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Rejeu -------------------------------------------------------- */
+
+.rejeu {
+  display: grid;
+  gap: 18px;
+}
+.rejeu__plateau {
+  background: var(--table);
+  color: var(--sur-table);
+  border-radius: 20px;
+  padding: clamp(14px, 2.5vw, 26px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+}
+.rejeu__joueurs {
+  display: grid;
+  gap: 10px;
+}
+.rejeu__joueur {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+.rejeu__joueur.actif {
+  background: var(--table-bord);
+  box-shadow: inset 0 0 0 2px var(--sur-table);
+}
+.rejeu__joueur .main-revelee {
+  justify-content: flex-start;
+  max-width: none;
+}
+.rejeu__centre {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  min-width: 170px;
+}
+.rejeu__description {
+  min-height: 1.6em;
+  font: 700 1.1rem var(--police-titre);
+}
+.commandes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.commandes input[type='range'] {
+  flex: 1;
+  min-width: 180px;
+  accent-color: var(--encre);
+}
+.compteur-tour {
+  font-variant-numeric: tabular-nums;
+  min-width: 8ch;
+}
+
+/* ---------- Règles ------------------------------------------------------- */
+
+.regles {
+  max-width: 760px;
+}
+.regles section {
+  margin-bottom: 28px;
+}
+.regles .exemple {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.regles dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px 18px;
+  align-items: center;
+}
+.regles dd {
+  margin: 0;
+}
+
+/* ---------- Notifications ---------------------------------------------- */
+
+.toasts {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 8px;
+  z-index: 50;
+  width: min(420px, calc(100vw - 32px));
+}
+.toast {
+  background: var(--encre);
+  color: var(--papier);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px -10px rgb(0 0 0 / 0.5);
+}
+.toast--erreur {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* ---------- Adaptatif ---------------------------------------------------- */
+
+@media (max-width: 960px) {
+  .jeu {
+    grid-template-columns: 1fr;
+  }
+  .journal {
+    max-height: 260px;
+  }
+  .accueil,
+  .accueil-visiteur {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --carte-l: 58px;
+    --carte-h: 86px;
+  }
+  .plateau {
+    grid-template-areas:
+      'haut haut haut'
+      'gauche . droite'
+      'centre centre centre'
+      'statut statut statut'
+      'main main main'
+      'actions actions actions';
+    min-height: 0;
+  }
+  .plateau.deux-adversaires {
+    grid-template-areas:
+      'gauche gauche droite'
+      'centre centre centre'
+      'statut statut statut'
+      'main main main'
+      'actions actions actions';
+  }
+  .dos-eventail .carte--mini:nth-child(n + 5) {
+    display: none;
+  }
+  .main-joueur {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 18px 4px 8px;
+  }
+  .niveaux {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .rejeu__plateau {
+    grid-template-columns: 1fr;
+  }
+  .rejeu__joueur {
+    grid-template-columns: 1fr;
+  }
+  .eventail {
+    height: 130px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+.discret-table {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+.titre-classement {
+  margin-top: 28px;
+}

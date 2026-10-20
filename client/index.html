@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chroma</title>
+    <meta name="description" content="Jeu de cartes en ligne contre des adversaires contrôlés par ordinateur." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap"
+    />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script type="module" src="/js/main.js"></script>
+  </head>
+  <body>
+    <a class="evitement" href="#contenu">Aller au contenu</a>
+    <header class="barre">
+      <a class="logo" href="#/" aria-label="Chroma, accueil">
+        <span class="logo__disque" aria-hidden="true"></span>
+        <span class="logo__mot">Chroma</span>
+      </a>
+      <nav class="nav" id="nav" aria-label="Navigation principale"></nav>
+    </header>
+    <main id="contenu" tabindex="-1"></main>
+    <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+    <noscript>Chroma a besoin de JavaScript pour fonctionner.</noscript>
+  </body>
+</html>

@@ -23,6 +23,15 @@ MVP terminé (semaine 9) : toutes les fonctionnalités indispensables du [docume
 
 Fonctionnalités secondaires réalisées en plus : mode sombre (suit le réglage du système) et formes ▲ ● ■ ◆ sur les cartes pour les daltoniens.
 
+## Historique du projet
+
+| Période                                | Travail                                                                                                                                                                                          |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Semaine 3 (8 septembre 2026)           | Remise du [document de cadrage](docs/CADRAGE.md)                                                                                                                                                 |
+| Semaines 4 à 6 (jusqu'au 30 septembre) | Paquet de cartes, moteur de règles, bot facile, 21 tests Vitest (suivi de la semaine 6)                                                                                                          |
+| Semaine 9 (20 et 21 octobre)           | Base de données, authentification, API REST, bots moyen et difficile, interface, historique et rejeu, statistiques, classement, administration, tests d'API et de bout en bout, version autonome |
+| Semaine 10                             | Mise en ligne et démonstration                                                                                                                                                                   |
+
 ## Démarrer
 
 Prérequis : Node.js 20 ou plus récent.

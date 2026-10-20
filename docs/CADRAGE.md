@@ -26,11 +26,11 @@
 
 ### 1.3. Profils d'utilisateurs et rôles
 
-| Rôle | Permissions |
-|---|---|
-| **Visiteur non authentifié** | Consulte la page d'accueil, les règles du jeu et le classement public. Ne peut ni lancer une partie ni accéder à un historique. |
-| **Joueur inscrit** | Crée et gère son compte, lance et joue des parties, abandonne ou reprend une partie en cours, consulte l'historique et le rejeu de ses parties ainsi que ses statistiques personnelles. |
-| **Administrateur** | Accède à un tableau de bord de supervision, consulte la liste des comptes et des parties, désactive un compte fautif et purge les parties abandonnées. |
+| Rôle                         | Permissions                                                                                                                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Visiteur non authentifié** | Consulte la page d'accueil, les règles du jeu et le classement public. Ne peut ni lancer une partie ni accéder à un historique.                                                         |
+| **Joueur inscrit**           | Crée et gère son compte, lance et joue des parties, abandonne ou reprend une partie en cours, consulte l'historique et le rejeu de ses parties ainsi que ses statistiques personnelles. |
+| **Administrateur**           | Accède à un tableau de bord de supervision, consulte la liste des comptes et des parties, désactive un compte fautif et purge les parties abandonnées.                                  |
 
 ---
 
@@ -38,7 +38,7 @@
 
 ### 2.1. Fonctionnalités indispensables (MVP — Must Have)
 
-*Ces fonctionnalités sont obligatoires pour que le projet soit considéré comme fonctionnel et évaluable à la semaine 10.*
+_Ces fonctionnalités sont obligatoires pour que le projet soit considéré comme fonctionnel et évaluable à la semaine 10._
 
 - **Authentification et gestion d'accès** — inscription, connexion et déconnexion, mots de passe hachés (bcrypt), jetons JWT, protection des routes de l'API et distinction des rôles joueur / administrateur.
 - **Moteur de règles du jeu** — distribution, validation de la légalité de chaque coup, pioche, cartes d'action (inversion du sens, passage de tour, pioche imposée), cartes de changement de couleur, cumul des pénalités, déclaration « dernière carte » et détection de fin de partie. Le moteur s'exécute exclusivement sur le serveur, qui reste la seule autorité sur l'état de la partie.
@@ -49,7 +49,7 @@
 
 ### 2.2. Fonctionnalités secondaires (Nice to Have — optionnelles)
 
-*Ces fonctionnalités ne seront codées que si le MVP est entièrement terminé et testé.*
+_Ces fonctionnalités ne seront codées que si le MVP est entièrement terminé et testé._
 
 - Mode multijoueur en temps réel entre joueurs humains (WebSocket / Socket.IO) — rendu possible par l'architecture à serveur autoritaire retenue pour le MVP.
 - Animations de distribution et de jeu des cartes, effets sonores, mode sombre.
@@ -61,14 +61,14 @@
 
 ## 3. Architecture et choix technologiques
 
-| Composante | Technologie retenue | Justification technique |
-|---|---|---|
-| **Frontend** | JavaScript natif (ES2022), modules ES, rendu DOM | Le cours impose les technologies web fondamentales. L'absence de framework évite une couche d'abstraction inutile pour une interface à écrans peu nombreux, et les modules ES suffisent à organiser le code en unités testables (rendu, état, appels réseau). |
-| **Stylisation / UI** | CSS3 natif : variables, Grid, Flexbox, transitions | Les variables CSS permettent de gérer la palette des quatre couleurs du jeu et un futur mode sombre sans dépendance externe. Grid et Flexbox suffisent à disposer la table de jeu et la main du joueur de façon adaptative. |
-| **Backend & API** | Node.js + Express, API REST (JSON) | Un même langage de part et d'autre réduit la charge cognitive en travail solo. Express est minimaliste et bien documenté ; une API REST suffit ici, le client n'ayant que des actions unitaires à soumettre. Le serveur héberge le moteur de règles et demeure l'autorité sur l'état, ce qui empêche toute triche par la console du navigateur. |
-| **Base de données** | SQLite en développement, PostgreSQL en production | Le modèle est fortement relationnel (parties, participants, coups) et exige l'intégrité référentielle. SQLite ne demande aucune installation en développement ; PostgreSQL offre un déploiement gratuit et le SQL reste presque identique entre les deux. |
-| **Tests** | Vitest (unitaires), Supertest (API), Playwright (E2E) | Le moteur de règles est une fonction pure de l'état et du coup joué : il se prête idéalement aux tests unitaires, y compris sur les cas limites. Supertest valide les routes et la protection par jeton, Playwright couvre le parcours complet d'une partie. |
-| **Qualité de code** | ESLint + Prettier, Git avec branches par fonctionnalité | Formatage et règles de lint uniformes évitent la dérive stylistique sur dix semaines ; les branches par fonctionnalité gardent la branche principale toujours fonctionnelle et démontrable. |
+| Composante           | Technologie retenue                                     | Justification technique                                                                                                                                                                                                                                                                                                                         |
+| -------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend**         | JavaScript natif (ES2022), modules ES, rendu DOM        | Le cours impose les technologies web fondamentales. L'absence de framework évite une couche d'abstraction inutile pour une interface à écrans peu nombreux, et les modules ES suffisent à organiser le code en unités testables (rendu, état, appels réseau).                                                                                   |
+| **Stylisation / UI** | CSS3 natif : variables, Grid, Flexbox, transitions      | Les variables CSS permettent de gérer la palette des quatre couleurs du jeu et un futur mode sombre sans dépendance externe. Grid et Flexbox suffisent à disposer la table de jeu et la main du joueur de façon adaptative.                                                                                                                     |
+| **Backend & API**    | Node.js + Express, API REST (JSON)                      | Un même langage de part et d'autre réduit la charge cognitive en travail solo. Express est minimaliste et bien documenté ; une API REST suffit ici, le client n'ayant que des actions unitaires à soumettre. Le serveur héberge le moteur de règles et demeure l'autorité sur l'état, ce qui empêche toute triche par la console du navigateur. |
+| **Base de données**  | SQLite en développement, PostgreSQL en production       | Le modèle est fortement relationnel (parties, participants, coups) et exige l'intégrité référentielle. SQLite ne demande aucune installation en développement ; PostgreSQL offre un déploiement gratuit et le SQL reste presque identique entre les deux.                                                                                       |
+| **Tests**            | Vitest (unitaires), Supertest (API), Playwright (E2E)   | Le moteur de règles est une fonction pure de l'état et du coup joué : il se prête idéalement aux tests unitaires, y compris sur les cas limites. Supertest valide les routes et la protection par jeton, Playwright couvre le parcours complet d'une partie.                                                                                    |
+| **Qualité de code**  | ESLint + Prettier, Git avec branches par fonctionnalité | Formatage et règles de lint uniformes évitent la dérive stylistique sur dix semaines ; les branches par fonctionnalité gardent la branche principale toujours fonctionnelle et démontrable.                                                                                                                                                     |
 
 ---
 
@@ -172,23 +172,32 @@ Le client n'exécute aucune règle de jeu : il affiche l'état public de la part
 
 ## 5. Maquettes des parcours clés (Wireframes)
 
-*Maquettes réalisées sur Figma. Lien du projet consultable : **[à insérer]***
+_Les maquettes fil de fer sont dans le document de cadrage remis en semaine 3 (PDF)._
 
-| Écran | Contenu |
-|---|---|
-| **1 — Connexion / inscription** | Formulaire unique à bascule, messages de validation, accès invité au classement public. |
-| **2 — Accueil du joueur** | Bouton de nouvelle partie avec choix de la difficulté, reprise de la partie en cours, résumé des statistiques personnelles et aperçu du classement. |
-| **3 — Table de jeu** | Écran central du parcours : mains des trois bots (dos de cartes et compteur), pile de défausse, pioche, main du joueur, indicateur de couleur active et de sens de jeu, bouton « dernière carte ». |
-| **4 — Historique et rejeu d'une partie** | Liste des parties passées avec filtres, et vue de rejeu coup par coup avec navigation avant / arrière. |
+| Écran                                    | Contenu                                                                                                                                                                                            |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1 — Connexion / inscription**          | Formulaire unique à bascule, messages de validation, accès invité au classement public.                                                                                                            |
+| **2 — Accueil du joueur**                | Bouton de nouvelle partie avec choix de la difficulté, reprise de la partie en cours, résumé des statistiques personnelles et aperçu du classement.                                                |
+| **3 — Table de jeu**                     | Écran central du parcours : mains des trois bots (dos de cartes et compteur), pile de défausse, pioche, main du joueur, indicateur de couleur active et de sens de jeu, bouton « dernière carte ». |
+| **4 — Historique et rejeu d'une partie** | Liste des parties passées avec filtres, et vue de rejeu coup par coup avec navigation avant / arrière.                                                                                             |
 
-> **À compléter :** déposer les captures des maquettes dans `docs/wireframes/` et les insérer ci-dessous, puis remplacer le lien Figma ci-dessus.
+**Écrans réalisés (semaine 9)** — captures de l'application terminée :
+
+| Écran                       | Capture                                         |
+| --------------------------- | ----------------------------------------------- |
+| 1 — Connexion / inscription | ![Connexion](captures/1-connexion.png)          |
+| 2 — Accueil du joueur       | ![Accueil](captures/2-accueil.png)              |
+| 3 — Table de jeu            | ![Table de jeu](captures/3-table-de-jeu.png)    |
+| 3 — Fin de partie           | ![Fin de partie](captures/3b-fin-de-partie.png) |
+| 4 — Rejeu                   | ![Rejeu](captures/4-rejeu.png)                  |
+| 4 — Historique              | ![Historique](captures/4b-historique.png)       |
 
 ---
 
 ## 6. Analyse des risques techniques
 
-| Risque / défi technique | Impact | Solution envisagée |
-|---|---|---|
+| Risque / défi technique                                                                                               | Impact    | Solution envisagée                                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Cas limites du moteur de règles (cumul des pénalités, changement de couleur, inversion à deux joueurs, fin de pioche) | **Élevé** | Écrire les règles sous forme de fonction pure et bâtir la suite de tests Vitest avant l'interface, dès la semaine 4. Chaque cas limite identifié devient un test de non-régression. La liste exhaustive des règles retenues est figée par écrit avant tout codage. |
-| Synchronisation de l'état entre le client et le serveur (double soumission, rechargement de page en pleine partie) | **Élevé** | Le serveur reste seule autorité : chaque coup est validé contre un numéro de tour attendu et rejeté s'il est périmé. Le client se réhydrate depuis l'API à chaque chargement plutôt que de conserver un état durable. |
-| Bots trop lents ou trop prévisibles nuisant à l'intérêt du jeu | **Moyen** | Livrer d'abord le bot aléatoire légal, qui suffit à valider le moteur, puis raffiner les heuristiques une fois le MVP stable. Un délai artificiel court entre les coups des bots rend la partie lisible sans complexité additionnelle. |
+| Synchronisation de l'état entre le client et le serveur (double soumission, rechargement de page en pleine partie)    | **Élevé** | Le serveur reste seule autorité : chaque coup est validé contre un numéro de tour attendu et rejeté s'il est périmé. Le client se réhydrate depuis l'API à chaque chargement plutôt que de conserver un état durable.                                              |
+| Bots trop lents ou trop prévisibles nuisant à l'intérêt du jeu                                                        | **Moyen** | Livrer d'abord le bot aléatoire légal, qui suffit à valider le moteur, puis raffiner les heuristiques une fois le MVP stable. Un délai artificiel court entre les coups des bots rend la partie lisible sans complexité additionnelle.                             |

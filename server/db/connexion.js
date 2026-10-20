@@ -71,7 +71,9 @@ async function ouvrirSqlite(fichier) {
 
 async function ouvrirPostgres(url, PoolInjecte) {
   const Pool = PoolInjecte ?? (await import('pg')).default.Pool;
-  const pool = new Pool(url ? { connectionString: url } : undefined);
+  // Certains hébergeurs exigent une connexion chiffrée : DATABASE_SSL=true.
+  const ssl = process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined;
+  const pool = new Pool(url ? { connectionString: url, ssl } : undefined);
 
   const adapter = (client) => ({
     dialecte: 'postgres',

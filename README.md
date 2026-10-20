@@ -58,6 +58,43 @@ NODE_ENV=production JWT_SECRET=... DATABASE_URL=postgres://user:mdp@hote/chroma 
 
 Les tables sont créées au premier démarrage (`server/db/schema.postgres.sql`).
 
+## Mise en ligne
+
+### Sur Render (gratuit)
+
+Le fichier `render.yaml` décrit tout : le serveur web, la base PostgreSQL et les variables.
+
+1. Sur [render.com](https://render.com), se connecter avec GitHub.
+2. **New → Blueprint**, choisir le dépôt `Chroma` et la branche à déployer.
+3. Remplir les trois valeurs demandées : `ADMIN_COURRIEL`, `ADMIN_NOM`, `ADMIN_MOT_DE_PASSE`
+   (au moins 8 caractères, avec une lettre et un chiffre). Le compte administrateur est créé au démarrage.
+4. **Apply**. Après quelques minutes, le site est en ligne à l'adresse `https://chroma-xxxx.onrender.com`.
+
+`JWT_SECRET` est généré automatiquement et `DATABASE_URL` est relié à la base.
+Limites de l'offre gratuite : le serveur s'endort après 15 minutes sans visite (le premier
+chargement prend alors environ une minute) et la base gratuite expire 30 jours après sa création.
+
+Vérifier le site en ligne avec les tests de bout en bout :
+
+```bash
+E2E_URL=https://chroma-xxxx.onrender.com npm run test:e2e
+```
+
+### Ailleurs
+
+- **Avec Docker** (Railway, Fly.io, un VPS) : le `Dockerfile` est fourni.
+- **Variables** : `NODE_ENV=production`, `JWT_SECRET`, `DATABASE_URL`, et `DATABASE_SSL=true`
+  si l'hébergeur exige une connexion chiffrée à la base.
+- **Santé** : `GET /api/sante` répond `{"statut":"ok"}` quand le serveur et la base fonctionnent.
+
+### Tester avec un vrai PostgreSQL
+
+```bash
+TEST_DATABASE_URL=postgres://user:mdp@localhost:5432/chroma_test npm test
+```
+
+Attention : ce test vide la base indiquée.
+
 ## Version autonome (sans serveur)
 
 Pour une démo ou un hébergement qui n'accepte que des fichiers statiques, on peut générer

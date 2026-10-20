@@ -47,6 +47,15 @@ export function creerRoutes({ db, secret, limiteAuth = 20 }) {
   );
   // Le jeton est sans état : se déconnecter = le client oublie son jeton.
   r.post('/auth/deconnexion', (_req, res) => res.status(204).end());
+
+  // Vérification de santé pour l'hébergeur : le serveur répond et la base aussi.
+  r.get(
+    '/sante',
+    route(async (_req, res) => {
+      await db.un('SELECT 1 AS ok');
+      res.json({ statut: 'ok', base: db.dialecte });
+    }),
+  );
   r.get('/auth/moi', connecte, (req, res) => res.json({ utilisateur: auth.publicUtilisateur(req.utilisateur) }));
 
   // ---- Parties --------------------------------------------------------------

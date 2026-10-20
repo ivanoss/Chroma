@@ -1,0 +1,32 @@
+# Déploiement sur Render (https://render.com) : New > Blueprint, puis choisir ce dépôt.
+# Crée le serveur web et la base PostgreSQL, et les relie automatiquement.
+services:
+  - type: web
+    name: chroma
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/sante
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chroma-db
+          property: connectionString
+      # Compte administrateur créé au démarrage : remplir ces valeurs dans le tableau de bord Render.
+      - key: ADMIN_COURRIEL
+        sync: false
+      - key: ADMIN_NOM
+        sync: false
+      - key: ADMIN_MOT_DE_PASSE
+        sync: false
+
+databases:
+  - name: chroma-db
+    plan: free
+    databaseName: chroma
+    user: chroma

@@ -30,28 +30,37 @@ function normaliserLigne(ligne) {
 }
 
 async function ouvrirSqlite(fichier) {
-  const { default: Database } = await import('better-sqlite3');
+  // SQLite est intégré à Node.js (module node:sqlite) : rien à compiler à l'installation.
+  const { DatabaseSync } = await import('node:sqlite');
   if (fichier !== ':memory:') mkdirSync(dirname(fichier), { recursive: true });
-  const base = new Database(fichier);
-  base.pragma('foreign_keys = ON');
-  if (fichier !== ':memory:') base.pragma('journal_mode = WAL');
+  const base = new DatabaseSync(fichier);
+  base.exec('PRAGMA foreign_keys = ON');
+  if (fichier !== ':memory:') base.exec('PRAGMA journal_mode = WAL');
   base.exec(readFileSync(join(ICI, 'schema.sqlite.sql'), 'utf8'));
+
+  // node:sqlite renvoie des objets sans prototype : on les copie en objets ordinaires.
+  const objet = (ligne) => (ligne ? { ...ligne } : undefined);
+  let enTransaction = false;
 
   const db = {
     dialecte: 'sqlite',
     async tous(sql, params = []) {
-      return base.prepare(sql).all(...params);
+      return base
+        .prepare(sql)
+        .all(...params)
+        .map(objet);
     },
     async un(sql, params = []) {
-      return base.prepare(sql).get(...params);
+      return objet(base.prepare(sql).get(...params));
     },
     async executer(sql, params = []) {
-      return { changements: base.prepare(sql).run(...params).changes };
+      return { changements: Number(base.prepare(sql).run(...params).changes) };
     },
-    // better-sqlite3 est synchrone : tant que le callback n'attend que des
+    // node:sqlite est synchrone : tant que le callback n'attend que des
     // appels à la base, aucune autre requête HTTP ne peut s'intercaler.
     async transaction(fn) {
-      if (base.inTransaction) return fn(db); // pas de transaction imbriquée
+      if (enTransaction) return fn(db); // pas de transaction imbriquée
+      enTransaction = true;
       base.exec('BEGIN');
       try {
         const resultat = await fn(db);
@@ -60,6 +69,8 @@ async function ouvrirSqlite(fichier) {
       } catch (err) {
         base.exec('ROLLBACK');
         throw err;
+      } finally {
+        enTransaction = false;
       }
     },
     async fermer() {

@@ -191,6 +191,7 @@ _Les maquettes fil de fer sont dans le document de cadrage remis en semaine 3 (P
 | 3 — Fin de partie           | ![Fin de partie](captures/3b-fin-de-partie.png) |
 | 4 — Rejeu                   | ![Rejeu](captures/4-rejeu.png)                  |
 | 4 — Historique              | ![Historique](captures/4b-historique.png)       |
+| Téléphone — table de jeu    | ![Téléphone](captures/7-mobile.png)             |
 
 ---
 

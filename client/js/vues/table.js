@@ -41,6 +41,8 @@ export async function vueTable(conteneur) {
     journalOuvert: false,
     actif: true,
     departCarte: null, // position de la carte cliquée, pour l'animation
+    nouvelles: new Set(), // cartes que le joueur vient de piocher (repérées dans sa main)
+    enArrivee: new Set(), // cartes encore « en vol » vers la main (cachées pour l'instant)
   };
 
   const arene = h('section', { class: 'arene', 'aria-label': 'Table de jeu' });
@@ -253,6 +255,8 @@ export async function vueTable(conteneur) {
               }
             : undefined,
         });
+        if (etat.nouvelles.has(c.id)) el.classList.add('carte--nouvelle');
+        if (etat.enArrivee.has(c.id)) el.classList.add('carte--arrivee');
         el.style.setProperty('--a', String((i - milieu) * pasAngle));
         el.style.setProperty('--y', String((i - milieu) ** 2 * courbe));
         return el;
@@ -369,6 +373,75 @@ export async function vueTable(conteneur) {
     await Promise.all(vols);
   }
 
+  // Le joueur voit les cartes qu'il pioche : elles sortent de la pioche face visible,
+  // restent un instant au centre de la table, puis rejoignent sa main.
+  async function revelerPioche(cartes, mainFinale) {
+    const v = etat.affichage;
+    if (!cartes.length) {
+      v.main = mainFinale;
+      v.joueurs[v.moi].nbCartes = mainFinale.length;
+      dessiner();
+      return;
+    }
+    const deck = arene.querySelector('.pioche .carte')?.getBoundingClientRect();
+    const centre = arene.querySelector('.centre')?.getBoundingClientRect();
+    const emplacements = cartes.map((c) => {
+      const el = elementCarte(c, { taille: 'grande' });
+      el.style.visibility = 'hidden';
+      return el;
+    });
+    const calque = h(
+      'div',
+      { class: 'revelation', role: 'status' },
+      h(
+        'p',
+        { class: 'revelation__titre' },
+        cartes.length > 1 ? `Vous piochez ${cartes.length} cartes` : 'Vous piochez',
+      ),
+      h('div', { class: 'revelation__cartes' }, emplacements),
+    );
+    if (centre) {
+      calque.style.left = `${centre.left + centre.width / 2}px`;
+      calque.style.top = `${centre.top + centre.height / 2}px`;
+    }
+    document.body.append(calque);
+
+    // 1. Les cartes sortent de la pioche, face visible, une par une.
+    await Promise.all(
+      cartes.map((c, k) =>
+        attendre(k * 140).then(async () => {
+          await voler(elementCarte(c, { taille: 'grande' }), deck, emplacements[k].getBoundingClientRect(), {
+            duree: 360,
+          });
+          emplacements[k].style.visibility = 'visible';
+        }),
+      ),
+    );
+    // 2. On laisse le temps de les regarder.
+    await attendre(900 + 150 * cartes.length);
+    if (!etat.actif) return calque.remove();
+
+    // 3. Elles rejoignent la main, où elles restent repérées jusqu'au prochain coup.
+    const departs = emplacements.map((el) => el.getBoundingClientRect());
+    calque.remove();
+    v.main = mainFinale;
+    v.joueurs[v.moi].nbCartes = mainFinale.length;
+    for (const c of cartes) {
+      etat.nouvelles.add(c.id);
+      etat.enArrivee.add(c.id);
+    }
+    dessiner();
+    await Promise.all(
+      cartes.map((c, k) => {
+        const cible = arene.querySelector(`.main-joueur [data-id="${c.id}"]`)?.getBoundingClientRect();
+        return voler(elementCarte(c, { taille: 'grande' }), departs[k], cible, { duree: 380 }).then(() => {
+          etat.enArrivee.delete(c.id);
+          arene.querySelector(`.main-joueur [data-id="${c.id}"]`)?.classList.remove('carte--arrivee');
+        });
+      }),
+    );
+  }
+
   // Petit rectangle au centre d'une zone (pour viser le milieu de la main).
   function centreRect(r) {
     const c = centreDe(r);
@@ -376,15 +449,21 @@ export async function vueTable(conteneur) {
   }
 
   // Joue un événement à l'écran : vol de carte, mise à jour de l'affichage, effet.
-  async function jouerEvenement(evt) {
+  async function jouerEvenement(evt, mainFinale = null) {
     const v = etat.affichage;
     const humain = evt.position === v.moi;
+    // Cartes piochées par le joueur : ce qui est dans sa main finale et pas dans sa main actuelle.
+    const piocheesParMoi = () => {
+      const avant = new Set(v.main.map((c) => c.id));
+      return (mainFinale ?? []).filter((c) => !avant.has(c.id));
+    };
     const j = v.joueurs[evt.position];
     if (evt.type === 'jouer') {
       const de = humain ? etat.departCarte : rectSiege(evt.position);
       const vers = arene.querySelector('.defausse')?.getBoundingClientRect();
       if (humain) {
         v.main = v.main.filter((c) => c.id !== evt.carte.id);
+        j.nbCartes = v.main.length;
         v.coupsJouables = [];
         dessiner();
       }
@@ -401,10 +480,17 @@ export async function vueTable(conteneur) {
       if (texte) eclat(texte, v.couleurActive);
       if (evt.derniereCarte) setTimeout(() => eclat('Dernière carte !', 'jaune'), texte ? 500 : 0);
       if (evt.cartesPiochees > 0) {
-        await animerPioche(evt.position, evt.cartesPiochees);
-        if (!humain) j.nbCartes += evt.cartesPiochees;
-        dessiner();
+        if (humain && mainFinale) {
+          await revelerPioche(piocheesParMoi(), mainFinale);
+        } else {
+          await animerPioche(evt.position, evt.cartesPiochees);
+          if (!humain) j.nbCartes += evt.cartesPiochees;
+          dessiner();
+        }
       }
+    } else if (humain && mainFinale) {
+      v.penaliteEnCours = 0;
+      await revelerPioche(piocheesParMoi(), mainFinale);
     } else {
       await animerPioche(evt.position, evt.cartesPiochees);
       if (!humain) j.nbCartes += evt.cartesPiochees;
@@ -442,7 +528,7 @@ export async function vueTable(conteneur) {
     const [premier, ...bots] = evenements;
     if (premier) {
       ajouterJournal(premier);
-      await jouerEvenement(premier);
+      await jouerEvenement(premier, vueFinale.main);
     }
     for (const evt of bots) {
       if (!etat.actif) return;
@@ -471,6 +557,7 @@ export async function vueTable(conteneur) {
   async function envoyer(action) {
     if (etat.occupe) return;
     etat.occupe = true;
+    etat.nouvelles.clear();
     if (action.type === 'piocher') etat.departCarte = null;
     dessiner();
     try {

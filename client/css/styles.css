@@ -132,10 +132,12 @@ a {
 
 .visuellement-cache {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
 }
 
@@ -612,6 +614,7 @@ button.carte:disabled {
 /* ---------- Tableaux (classement, historique, admin) ------------------ */
 
 .tableau-conteneur {
+  position: relative; /* garde les éléments positionnés (libellés cachés) dans la zone qui défile */
   overflow-x: auto;
 }
 table {
@@ -1308,13 +1311,15 @@ dialog::backdrop {
 
 .toasts {
   position: fixed;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: max(16px, env(safe-area-inset-left, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  max-width: 420px;
+  margin-inline: auto;
   display: grid;
   gap: 8px;
   z-index: 50;
-  width: min(420px, calc(100vw - 32px));
+  pointer-events: none;
 }
 .toast {
   background: var(--encre);
@@ -1353,9 +1358,17 @@ dialog::backdrop {
       'centre centre'
       'moi moi'
       'main main';
-    min-height: calc(100vh - 120px);
+    min-height: calc(100vh - 12px);
+    min-height: calc(100dvh - 12px);
     border-radius: 16px;
     padding-inline: 8px;
+  }
+  /* En partie sur téléphone, la table prend tout l'écran : elle a son propre bouton « ← Accueil ». */
+  .page-partie .barre {
+    display: none;
+  }
+  .page-partie main {
+    padding: 6px max(6px, env(safe-area-inset-right, 0px)) 6px max(6px, env(safe-area-inset-left, 0px));
   }
   .arene--deux {
     grid-template-rows: auto auto minmax(230px, 1fr) auto auto;
@@ -1421,7 +1434,16 @@ dialog::backdrop {
     grid-template-columns: 1fr;
   }
   .eventail {
-    height: 130px;
+    height: 120px;
+    margin: 20px 0 24px;
+    padding-left: 12px;
+  }
+  .eventail .carte--grande {
+    --carte-l: 62px;
+    --carte-h: 90px;
+  }
+  .eventail .carte + .carte {
+    margin-left: -14px;
   }
 }
 

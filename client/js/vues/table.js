@@ -234,7 +234,8 @@ export async function vueTable(conteneur) {
     // Main du joueur, en éventail
     const n = v.main.length;
     const milieu = (n - 1) / 2;
-    const pasAngle = Math.min(5, 36 / Math.max(n, 1));
+    const etroit = window.innerWidth < 640;
+    const pasAngle = etroit ? Math.min(2.5, 18 / Math.max(n, 1)) : Math.min(5, 36 / Math.max(n, 1));
     const courbe = milieu > 0 ? Math.min(1.2, 14 / (milieu * milieu)) : 0;
     const main = h(
       'div',
@@ -276,7 +277,7 @@ export async function vueTable(conteneur) {
     const cartes = main.querySelectorAll('.carte');
     if (cartes.length < 2) return;
     const largeur = cartes[0].offsetWidth;
-    const dispo = main.clientWidth - 24;
+    const dispo = main.clientWidth - (window.innerWidth < 640 ? 44 : 24);
     const n = cartes.length;
     const necessaire = (n * largeur - dispo) / (n - 1);
     const chevauche = Math.min(largeur * 0.8, Math.max(largeur * 0.28, necessaire));

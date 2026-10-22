@@ -29,16 +29,22 @@ MVP terminé (semaine 9) : toutes les fonctionnalités indispensables du [docume
 | Statistiques personnelles et classement général                         | ✅   |
 | Tableau de bord administrateur                                          | ✅   |
 
-Fonctionnalités secondaires réalisées en plus : mode sombre (suit le réglage du système) et formes ▲ ● ■ ◆ sur les cartes pour les daltoniens.
+Fonctionnalités secondaires réalisées en plus :
+
+- **Animations de jeu** : les cartes volent du joueur vers la défausse et de la pioche vers celui qui pioche, avec des effets (« +2 », « Passe ! », « Inversion ! »).
+- **Table de jeu façon arène** : adversaires assis autour de la table (avatar, nombre de cartes), main en éventail, halo de la couleur active et anneau qui tourne dans le sens du jeu.
+- **Version téléphone** : toutes les pages s'adaptent à l'écran ; en partie, la table occupe tout l'écran ([capture](docs/captures/7-mobile.png)).
+- **Fin de partie** : boutons « Rejouer », « Revoir la partie » et « Retour à l'accueil ».
+- Mode sombre (suit le réglage du système) et formes ▲ ● ■ ◆ sur les cartes pour les daltoniens.
 
 ## Historique du projet
 
-| Période                                | Travail                                                                                                                                                                                          |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Semaine 3 (8 septembre 2026)           | Remise du [document de cadrage](docs/CADRAGE.md)                                                                                                                                                 |
-| Semaines 4 à 6 (jusqu'au 30 septembre) | Paquet de cartes, moteur de règles, bot facile, 21 tests Vitest (suivi de la semaine 6)                                                                                                          |
-| Semaine 9 (20 et 21 octobre)           | Base de données, authentification, API REST, bots moyen et difficile, interface, historique et rejeu, statistiques, classement, administration, tests d'API et de bout en bout, version autonome |
-| Semaine 10                             | Mise en ligne et démonstration                                                                                                                                                                   |
+| Période                                | Travail                                                                                                                                                                                                                                                            |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Semaine 3 (8 septembre 2026)           | Remise du [document de cadrage](docs/CADRAGE.md)                                                                                                                                                                                                                   |
+| Semaines 4 à 6 (jusqu'au 30 septembre) | Paquet de cartes, moteur de règles, bot facile, 21 tests Vitest (suivi de la semaine 6)                                                                                                                                                                            |
+| Semaine 9 (20 au 22 octobre)           | Base de données, authentification, API REST, bots moyen et difficile, interface, historique et rejeu, statistiques, classement, administration, tests d'API et de bout en bout, version autonome, mise en ligne sur Render, table de jeu animée, version téléphone |
+| Semaine 10                             | Démonstration                                                                                                                                                                                                                                                      |
 
 ## Démarrer
 

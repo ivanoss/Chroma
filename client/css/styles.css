@@ -1110,6 +1110,50 @@ tr.moi td {
     0 0 28px var(--c);
   animation: eclat 950ms ease-out forwards;
 }
+/* Cartes que le joueur pioche : montrées au centre, puis repérées dans la main */
+.revelation {
+  position: fixed;
+  z-index: 58;
+  translate: -50% -50%;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: rgb(12 14 44 / 0.86);
+  color: var(--sur-table);
+  box-shadow: 0 20px 50px rgb(0 0 0 / 0.5);
+  pointer-events: none;
+}
+.revelation__titre {
+  margin: 0;
+  font: 800 1.2rem var(--police-titre);
+}
+.revelation__cartes {
+  display: flex;
+  gap: 10px;
+}
+.revelation .carte--grande {
+  --carte-l: min(96px, 19vw, 13vh);
+  --carte-h: calc(var(--carte-l) * 1.46);
+}
+.carte--arrivee {
+  visibility: hidden;
+}
+.arene .main-joueur .carte--nouvelle::after {
+  content: 'Nouvelle';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  translate: -50% 0;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--jaune);
+  color: #2b2100;
+  font: 800 0.66rem/1.5 var(--police-texte);
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+}
 .dialogue-fin #titre-fin {
   font-size: 1.6rem;
 }

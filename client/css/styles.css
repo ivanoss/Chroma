@@ -9,6 +9,9 @@
   --jaune: #f4b92a;
   --vert: #18a374;
   --bleu: #3466e0;
+  --violet: #7b61e8;
+  --arene-1: #2b3170;
+  --arene-2: #12143a;
 
   --encre: #1c1f3b;
   --encre-douce: #555a7e;
@@ -678,71 +681,455 @@ tr.moi td {
   margin: 0 auto 16px;
 }
 
-/* ---------- Table de jeu ----------------------------------------------- */
+/* ---------- Table de jeu (l'arène) -------------------------------------- */
+/* La table garde le même look sombre dans les deux thèmes : c'est un tapis de jeu. */
 
-.jeu {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 20px;
-  align-items: start;
+.page-partie main {
+  max-width: none;
+  padding-block: 0 16px;
 }
-.plateau {
-  background: var(--table);
+
+.arene {
+  --actif: var(--bleu);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: max(640px, calc(100vh - 90px));
+  border-radius: 22px;
   color: var(--sur-table);
-  border-radius: 20px;
-  padding: clamp(14px, 2.5vw, 26px);
+  background: radial-gradient(ellipse at 50% 45%, var(--arene-1) 0%, var(--arene-2) 72%);
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(250px, 1fr) auto auto;
   grid-template-areas:
+    'barre barre barre'
     '. haut .'
     'gauche centre droite'
-    'statut statut statut'
-    'main main main'
-    'actions actions actions';
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  gap: 18px 12px;
-  min-height: 600px;
+    'moi moi moi'
+    'main main main';
+  gap: 6px 10px;
+  padding: 12px clamp(10px, 2vw, 24px) 14px;
 }
-.adversaire {
+/* Halo de la couleur active derrière la défausse. */
+.arene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--actif) 34%, transparent) 0%, transparent 38%);
+  transition: background 400ms;
+}
+
+/* Barre du haut */
+.arene__barre {
+  grid-area: barre;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.arene__outils {
+  display: flex;
+  gap: 8px;
+}
+.bouton-arene {
+  font: 700 0.9rem var(--police-texte);
+  color: var(--sur-table);
+  background: rgb(255 255 255 / 0.08);
+  border: 1.5px solid rgb(255 255 255 / 0.22);
+  border-radius: 999px;
+  padding: 7px 14px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.bouton-arene:hover {
+  background: rgb(255 255 255 / 0.16);
+}
+.bouton-arene:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.statut {
+  margin: 0;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.28);
+  font: 700 1.02rem var(--police-titre);
+  text-align: center;
+  max-width: none;
+}
+.statut--mon-tour {
+  background: var(--sur-table);
+  color: var(--arene-2);
+}
+.statut--penalite {
+  background: var(--jaune);
+  color: #2b2100;
+}
+
+/* Sièges des joueurs */
+.siege {
   display: grid;
   justify-items: center;
   align-content: center;
   gap: 8px;
-  padding: 10px;
-  border-radius: 14px;
-  transition: background var(--duree);
+  min-width: 0;
 }
-.adversaire--haut {
+.siege--haut {
   grid-area: haut;
 }
-.adversaire--gauche {
+.siege--gauche {
   grid-area: gauche;
 }
-.adversaire--droite {
+.siege--droite {
   grid-area: droite;
 }
-.adversaire.actif {
-  background: var(--table-bord);
-  box-shadow: inset 0 0 0 2px var(--sur-table);
+.siege__identite {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.adversaire__nom {
-  font: 700 1.05rem var(--police-titre);
+.avatar {
+  --c: var(--bleu);
+  flex: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 800 1.35rem var(--police-titre);
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c) 65%, #fff), var(--c) 70%);
+  box-shadow:
+    0 0 0 3px rgb(255 255 255 / 0.9),
+    0 6px 14px rgb(0 0 0 / 0.4);
+  transition: box-shadow 200ms;
 }
-.adversaire__compte {
-  font-size: 0.9rem;
+.siege.actif .avatar {
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 7px var(--actif),
+    0 0 26px var(--actif);
+  animation: battement 1.1s ease-in-out infinite;
+}
+.siege__nom {
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.35);
+  font-weight: 700;
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+.siege__compte {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--sur-table);
+  color: var(--arene-2);
+  font: 800 1rem var(--police-titre);
+  font-variant-numeric: tabular-nums;
+}
+.siege__compte.alerte {
+  background: var(--jaune);
+  color: #2b2100;
+  animation: battement 0.9s ease-in-out infinite;
+}
+.eventail-dos {
+  position: relative;
+  width: 150px;
+  height: 78px;
+}
+.eventail-dos .carte {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  margin-left: calc(var(--carte-l) / -2);
+  transform-origin: 50% 115%;
+  transform: rotate(calc(var(--a, 0) * 1deg));
+}
+
+/* Le joueur */
+.siege--moi {
+  grid-area: moi;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.bouton-annonce {
+  font: 800 0.98rem var(--police-titre);
+  color: #fff;
+  background: var(--rouge);
+  border: 3px solid #fff;
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.35);
+}
+.bouton-annonce:disabled {
+  opacity: 0.3;
+  cursor: default;
+  box-shadow: none;
+}
+.bouton-annonce:not(:disabled) {
+  animation: lueur 1s ease-in-out infinite;
+}
+.bouton-annonce[aria-pressed='true'] {
+  background: var(--jaune);
+  color: #2b2100;
+  animation: none;
+}
+
+/* Centre : pioche, défausse et sens du jeu */
+.centre {
+  grid-area: centre;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(22px, 5vw, 64px);
+  min-width: 0;
+}
+.tourbillon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(360px, 100%);
+  aspect-ratio: 1;
+  margin: 0;
+  translate: -50% -50%;
+  z-index: -1;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    color-mix(in srgb, var(--actif) 65%, transparent) 0deg 16deg,
+    transparent 16deg 30deg
+  );
+  mask: radial-gradient(circle, transparent 62%, #000 63%, #000 66%, transparent 67%);
+  animation: tourne 16s linear infinite;
   opacity: 0.85;
 }
-.adversaire__compte.alerte {
-  color: var(--jaune);
+.tourbillon--inverse {
+  animation-direction: reverse;
+}
+.pioche {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.pioche:disabled {
+  cursor: default;
+}
+.pioche .carte {
+  box-shadow:
+    3px 3px 0 -1px #fff,
+    6px 6px 0 -2px rgb(255 255 255 / 0.7),
+    9px 9px 0 -3px rgb(255 255 255 / 0.4),
+    0 12px 24px rgb(0 0 0 / 0.45);
+  transition: transform var(--duree);
+}
+.pioche:not(:disabled):hover .carte {
+  transform: translateY(-5px) rotate(-2deg);
+}
+.pioche--suggeree .carte {
+  animation: invite 1.4s ease-in-out infinite;
+}
+.pioche__texte {
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.35);
   font-weight: 700;
-  opacity: 1;
+  font-size: 0.9rem;
 }
-.dos-eventail {
+.defausse-zone {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+.defausse {
+  position: relative;
+  width: 96px;
+  height: 140px;
+}
+.defausse::after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  z-index: -1;
+  border-radius: 22px;
+  box-shadow:
+    0 0 0 4px var(--actif),
+    0 0 44px var(--actif);
+  transition: box-shadow 400ms;
+}
+.defausse .carte {
+  position: absolute;
+  inset: 0;
+  transform: rotate(var(--r, 0deg));
+}
+.pastille-couleur {
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--c);
+  color: #fff;
+  font: 800 0.95rem var(--police-titre);
+  box-shadow: 0 0 0 2px #fff;
+}
+.sens {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  translate: -50% 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* La main du joueur, en éventail */
+.arene .main-joueur {
+  grid-area: main;
   display: flex;
-  padding-left: 18px;
+  justify-content: center;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  gap: 0;
+  padding: 30px 12px 26px;
+  min-height: 186px;
 }
-.dos-eventail .carte {
-  margin-left: -18px;
+.arene .main-joueur .carte {
+  --carte-l: 84px;
+  --carte-h: 122px;
+  flex: none;
+  margin-left: calc(var(--chevauche, 24px) * -1);
+  transform-origin: 50% 120%;
+  transform: translateY(calc(var(--y, 0) * 1px)) rotate(calc(var(--a, 0) * 1deg));
+  transition:
+    transform 160ms,
+    filter 160ms,
+    box-shadow 160ms;
 }
+.arene .main-joueur .carte:first-child {
+  margin-left: 0;
+}
+.arene .main-joueur.mon-tour .carte--jouable {
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 18px 4px color-mix(in srgb, var(--c) 70%, #fff);
+}
+.arene .main-joueur .carte--jouable:hover,
+.arene .main-joueur .carte--jouable:focus-visible {
+  z-index: 2;
+  transform: translateY(calc(var(--y, 0) * 1px - 28px)) rotate(calc(var(--a, 0) * 1deg)) scale(1.06);
+}
+
+/* Journal en tiroir */
+.journal-tiroir {
+  position: absolute;
+  top: 58px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 5;
+  width: min(300px, calc(100% - 24px));
+  overflow-y: auto;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--encre);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
+}
+.journal-tiroir ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 0.92rem;
+}
+.journal-tiroir li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+/* Animations : cartes en vol et effets */
+.carte-volante {
+  position: fixed;
+  z-index: 55;
+  margin: 0;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+.effet {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  translate: -50% -50%;
+  font: 800 clamp(2.4rem, 6vw, 4.4rem) / 1 var(--police-titre);
+  color: #fff;
+  white-space: nowrap;
+  text-shadow:
+    0 4px 0 rgb(0 0 0 / 0.35),
+    0 0 28px var(--c);
+  animation: eclat 950ms ease-out forwards;
+}
+.dialogue-fin #titre-fin {
+  font-size: 1.6rem;
+}
+
+@keyframes tourne {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes battement {
+  50% {
+    scale: 1.07;
+  }
+}
+@keyframes lueur {
+  50% {
+    box-shadow:
+      0 0 0 7px color-mix(in srgb, var(--rouge) 45%, transparent),
+      0 6px 16px rgb(0 0 0 / 0.35);
+  }
+}
+@keyframes invite {
+  50% {
+    translate: 0 -6px;
+  }
+}
+@keyframes eclat {
+  0% {
+    opacity: 0;
+    scale: 0.4;
+  }
+  25% {
+    opacity: 1;
+    scale: 1.15;
+  }
+  70% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1;
+    translate: -50% -80%;
+  }
+}
+
+/* Éléments partagés avec l'écran de rejeu */
 .main-revelee {
   display: flex;
   flex-wrap: wrap;
@@ -751,132 +1138,24 @@ tr.moi td {
   max-width: 260px;
 }
 
-.centre {
-  grid-area: centre;
-  display: grid;
-  grid-template-columns: auto auto;
-  align-items: center;
-  justify-items: center;
-  gap: 10px 28px;
-}
-.pioche {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  background: none;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 14px;
-}
-.pioche:disabled {
-  cursor: default;
-}
-.pioche:not(:disabled):hover .carte {
-  transform: translateY(-4px);
-}
-.pioche .carte {
-  transition: transform var(--duree);
-}
-.pioche__texte {
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-.defausse {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-}
-/* L'anneau autour de la défausse montre la couleur active. */
 .defausse__anneau {
   padding: 8px;
   border-radius: 18px;
   background: var(--anneau, transparent);
   transition: background 300ms;
 }
+
 .defausse__couleur {
   font-size: 0.9rem;
   font-weight: 700;
 }
-.sens {
-  grid-column: 1 / -1;
-  font-size: 0.9rem;
-  opacity: 0.9;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.sens__fleche {
-  font-size: 1.3rem;
-  line-height: 1;
-  display: inline-block;
-}
-.statut {
-  grid-area: statut;
-  text-align: center;
-  min-height: 1.6em;
-  font: 700 1.15rem var(--police-titre);
-}
-.statut--penalite {
-  color: var(--jaune);
-}
-.main-joueur {
-  grid-area: main;
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding-top: 16px;
-}
-.actions-jeu {
-  grid-area: actions;
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.plateau .bouton {
-  border-color: var(--sur-table);
-  background: var(--sur-table);
-  color: var(--table);
-}
-.plateau .bouton--secondaire {
-  background: transparent;
-  color: var(--sur-table);
-}
-.bouton-annonce[aria-pressed='true'] {
-  background: var(--jaune);
-  border-color: var(--jaune);
-  color: #2b2100;
-}
 
-.journal {
-  background: var(--surface);
-  border-radius: 14px;
-  padding: 16px 18px;
-  max-height: 640px;
-  overflow-y: auto;
-}
-.journal ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-  font-size: 0.92rem;
-}
-.journal li {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-}
 .journal__tour {
   color: var(--encre-douce);
   font-variant-numeric: tabular-nums;
   min-width: 2.2em;
 }
+
 .puce {
   display: inline-block;
   width: 0.75em;
@@ -1053,12 +1332,6 @@ dialog::backdrop {
 /* ---------- Adaptatif ---------------------------------------------------- */
 
 @media (max-width: 960px) {
-  .jeu {
-    grid-template-columns: 1fr;
-  }
-  .journal {
-    max-height: 260px;
-  }
   .accueil,
   .accueil-visiteur {
     grid-template-columns: 1fr;
@@ -1070,32 +1343,70 @@ dialog::backdrop {
     --carte-l: 58px;
     --carte-h: 86px;
   }
-  .plateau {
+  .arene {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto auto minmax(230px, 1fr) auto auto;
     grid-template-areas:
-      'haut haut haut'
-      'gauche . droite'
-      'centre centre centre'
-      'statut statut statut'
-      'main main main'
-      'actions actions actions';
-    min-height: 0;
+      'barre barre'
+      'haut haut'
+      'gauche droite'
+      'centre centre'
+      'moi moi'
+      'main main';
+    min-height: calc(100vh - 120px);
+    border-radius: 16px;
+    padding-inline: 8px;
   }
-  .plateau.deux-adversaires {
+  .arene--deux {
+    grid-template-rows: auto auto minmax(230px, 1fr) auto auto;
     grid-template-areas:
-      'gauche gauche droite'
-      'centre centre centre'
-      'statut statut statut'
-      'main main main'
-      'actions actions actions';
+      'barre barre'
+      'gauche droite'
+      'centre centre'
+      'moi moi'
+      'main main';
   }
-  .dos-eventail .carte--mini:nth-child(n + 5) {
-    display: none;
+  .arene__barre {
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .main-joueur {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    justify-content: flex-start;
-    padding: 18px 4px 8px;
+  .arene__barre .statut {
+    order: 3;
+    flex-basis: 100%;
+    font-size: 0.95rem;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+  .eventail-dos {
+    width: 110px;
+    height: 58px;
+  }
+  .eventail-dos .carte--petite {
+    --carte-l: 32px;
+    --carte-h: 46px;
+  }
+  .tourbillon {
+    width: min(260px, 100%);
+  }
+  .defausse {
+    width: 74px;
+    height: 108px;
+  }
+  .defausse .carte--grande,
+  .pioche .carte--grande {
+    --carte-l: 74px;
+    --carte-h: 108px;
+  }
+  .arene .main-joueur {
+    padding: 24px 6px 20px;
+    min-height: 140px;
+  }
+  .arene .main-joueur .carte {
+    --carte-l: 64px;
+    --carte-h: 94px;
   }
   .niveaux {
     grid-template-columns: 1fr;

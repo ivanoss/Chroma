@@ -21,7 +21,9 @@ test('un joueur s’inscrit, joue une partie complète et la revoit', async ({ p
   await expect(page.locator('.adversaire .main-revelee')).toHaveCount(0);
 
   const message = page.locator('#message-jeu');
-  for (let i = 0; i < 500; i++) {
+  // On joue jusqu'à la fin (limite de temps : les animations allongent les parties).
+  const debut = Date.now();
+  while (Date.now() - debut < 150_000) {
     if (await page.locator('dialog[open] #titre-fin').count()) break;
     const couleur = page.locator('dialog[open] .choix-couleurs button').first();
     if (await couleur.count()) {
@@ -42,6 +44,9 @@ test('un joueur s’inscrit, joue une partie complète et la revoit', async ({ p
   }
 
   await expect(page.locator('dialog[open] #titre-fin')).toBeVisible({ timeout: 30_000 });
+  // Fin de partie : on peut rejouer, revoir la partie ou retourner à l'accueil.
+  await expect(page.locator('dialog[open]').getByRole('button', { name: 'Rejouer' })).toBeVisible();
+  await expect(page.locator('dialog[open]').getByRole('link', { name: 'Retour à l’accueil' })).toBeVisible();
   await page.getByRole('link', { name: 'Revoir la partie' }).click();
 
   // Rejeu : avancer au clavier change la description du coup.

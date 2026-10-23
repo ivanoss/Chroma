@@ -65,13 +65,15 @@ npm run creer-admin -- admin@exemple.ca admin MotDePasse123
 
 ### Variables d'environnement
 
-| Variable       | Rôle                                                                 | Par défaut                           |
-| -------------- | -------------------------------------------------------------------- | ------------------------------------ |
-| `PORT`         | Port HTTP                                                            | `3000`                               |
-| `JWT_SECRET`   | Secret de signature des jetons (**obligatoire en production**)       | généré au démarrage en développement |
-| `DATABASE_URL` | URL PostgreSQL ; si présente, PostgreSQL remplace SQLite             | —                                    |
-| `SQLITE_FILE`  | Fichier SQLite                                                       | `data/chroma.db`                     |
-| `NODE_ENV`     | `production` désactive le journal des requêtes et exige `JWT_SECRET` | —                                    |
+| Variable                                            | Rôle                                                                 | Par défaut                           |
+| --------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------ |
+| `PORT`                                              | Port HTTP                                                            | `3000`                               |
+| `JWT_SECRET`                                        | Secret de signature des jetons (**obligatoire en production**)       | généré au démarrage en développement |
+| `DATABASE_URL`                                      | URL PostgreSQL ; si présente, PostgreSQL remplace SQLite             | —                                    |
+| `SQLITE_FILE`                                       | Fichier SQLite                                                       | `data/chroma.db`                     |
+| `NODE_ENV`                                          | `production` désactive le journal des requêtes et exige `JWT_SECRET` | —                                    |
+| `DATABASE_SSL`                                      | `true` pour une connexion chiffrée à PostgreSQL                      | —                                    |
+| `ADMIN_COURRIEL`, `ADMIN_NOM`, `ADMIN_MOT_DE_PASSE` | Crée (ou promeut) un compte administrateur au démarrage              | —                                    |
 
 Production avec PostgreSQL :
 
@@ -139,7 +141,7 @@ qui applique les règles. La version avec serveur reste l'architecture du projet
 ## Tests et qualité
 
 ```bash
-npm test             # Vitest : moteur, bots, API (Supertest), PostgreSQL (pg-mem)
+npm test             # Vitest : 60 tests (moteur, bots, API avec Supertest, PostgreSQL avec pg-mem)
 npm run test:e2e     # Playwright : partie complète dans un navigateur
 npm run lint         # ESLint
 npm run format       # Prettier
@@ -150,13 +152,14 @@ Pour Playwright, installer le navigateur une fois : `npx playwright install chro
 
 ## Pile technologique
 
-| Couche          | Technologies                                                                  |
-| --------------- | ----------------------------------------------------------------------------- |
-| Frontend        | HTML5, CSS3 (variables, Grid, Flexbox), JavaScript natif (ES2022, modules ES) |
-| Backend         | Node.js, Express, API REST (JSON), authentification par JWT                   |
-| Base de données | SQLite (développement), PostgreSQL (production)                               |
-| Tests           | Vitest, Supertest, Playwright                                                 |
-| Qualité         | ESLint, Prettier                                                              |
+| Couche          | Technologies                                                                                   |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| Frontend        | HTML5, CSS3 (variables, Grid, Flexbox), JavaScript natif (ES2022, modules ES)                  |
+| Backend         | Node.js 22, Express, API REST (JSON), authentification par JWT (bcrypt pour les mots de passe) |
+| Base de données | SQLite intégré à Node.js (développement), PostgreSQL (production)                              |
+| Tests           | Vitest, Supertest, Playwright                                                                  |
+| Qualité         | ESLint, Prettier, intégration continue GitHub Actions                                          |
+| Hébergement     | Render : service web Node.js et base PostgreSQL, redéploiement à chaque push sur `main`        |
 
 ## Organisation du dépôt
 
@@ -175,11 +178,16 @@ server/
   middleware/auth.js    vérification du jeton, rôles, limite de tentatives
   routes.js             routes REST
   app.js, index.js      application Express et démarrage
+  scripts/              créer un admin, comparer les bots
+statique/               version autonome (un seul fichier HTML, sans serveur)
 tests/
   unitaires/            moteur et bots
   api/                  routes avec Supertest (SQLite et PostgreSQL)
   e2e/                  parcours complet avec Playwright
 docs/                   cadrage et captures d'écran
+render.yaml             déploiement sur Render (serveur web + PostgreSQL)
+Dockerfile              image pour les autres hébergeurs
+.github/workflows/      intégration continue : lint et tests à chaque push
 ```
 
 ## API REST
@@ -190,6 +198,7 @@ Toutes les routes sont sous `/api`. Les routes marquées 🔒 exigent l'en-tête
 | --------------- | -------------------------------- | --------------------------------------------------------------- |
 | POST            | `/auth/inscription`              | Créer un compte → `{ jeton, utilisateur }`                      |
 | POST            | `/auth/connexion`                | Se connecter (courriel ou nom d'utilisateur)                    |
+| POST            | `/auth/deconnexion`              | Se déconnecter (le client oublie son jeton)                     |
 | GET 🔒          | `/auth/moi`                      | Profil de l'utilisateur connecté                                |
 | POST 🔒         | `/parties`                       | Nouvelle partie `{ difficulte, nbBots }`                        |
 | GET 🔒          | `/parties/en-cours`              | Partie à reprendre (ou `{ partie: null }`)                      |
@@ -205,6 +214,7 @@ Toutes les routes sont sous `/api`. Les routes marquées 🔒 exigent l'en-tête
 | PATCH 🔒 admin  | `/admin/utilisateurs/:id`        | Activer / désactiver `{ actif }`                                |
 | GET 🔒 admin    | `/admin/parties`                 | Toutes les parties                                              |
 | DELETE 🔒 admin | `/admin/parties/abandonnees`     | Purger les parties abandonnées                                  |
+| GET             | `/sante`                         | Vérification de santé : serveur et base de données              |
 
 ## Note
 
